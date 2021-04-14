@@ -26,18 +26,37 @@ def costars(name)
   # appeared with.
   # Hint: use a subquery
 
-  Actor
-  .joins(:movies)
-  .where('movies.id IN (?)',
-  (Movie.select(:id).joins(:actors).where('actors.name = ?', name)))
-  .where('actors.name != ?', name)
-  .distinct
-  .pluck(:name)
+  # Actor
+  # .joins(:movies)
+  # .where('movies.id IN (?)',
+  # (Movie.select(:id).joins(:actors).where('actors.name = ?', name)))
+  # .where('actors.name != ?', name)
+  # .distinct
+  # .pluck(:name)
+
+  subquery = Movie.select(:id).joins(:actors).where(actors: { name: name })
+
+  Movie
+    .joins(:actors)
+    .where.not(actors: { name: name })
+    .where(movies: { id: subquery })
+    .distinct
+    .pluck(:name)
 
 end
 
 def actor_out_of_work
   # Find the number of actors in the database who have not appeared in a movie
+
+  actors_with_appearances = Actor
+  .select(:id)
+  .joins(:movies)
+  .group(:id)
+
+  Actor
+  .select(:id)
+  .where.not(id: actors_with_appearances)
+  .count
 
 end
 
