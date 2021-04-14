@@ -48,14 +48,19 @@ end
 def actor_out_of_work
   # Find the number of actors in the database who have not appeared in a movie
 
-  actors_with_appearances = Actor
-  .select(:id)
-  .joins(:movies)
-  .group(:id)
+  # actors_with_appearances = Actor
+  # .select(:id)
+  # .joins(:movies)
+  # .group(:id)
+
+  # Actor
+  # .select(:id)
+  # .where.not(id: actors_with_appearances)
+  # .count
 
   Actor
-  .select(:id)
-  .where.not(id: actors_with_appearances)
+  .left_outer_joins(:movies)
+  .where(castings: { movie_id: nil })
   .count
 
 end
