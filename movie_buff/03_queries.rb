@@ -93,4 +93,11 @@ def longest_career
   # Order by actor names. Show each actor's id, name, and the length of
   # their career.
 
+  Actor
+  .select('actors.id, actors.name, (MAX(movies.yr) - MIN(movies.yr)) AS career')
+  .joins(:movies)
+  .group('actors.id, actors.name')
+  .order('career DESC, actors.name')
+  .limit(3)
+
 end
