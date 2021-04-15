@@ -73,6 +73,18 @@ def starring(whazzername)
   # ex. "Sylvester Stallone" is like "sylvester" and "lester stone" but
   # not like "stallone sylvester" or "zylvester ztallone"
 
+  name_matcher = whazzername.gsub!(/[^0-9A-Za-z]/, '').downcase.split("").map.with_index do |character, index|
+    if index == 0
+      '%' + character + '%'
+    else
+      character + '%'
+    end
+  end.join("")
+
+  Movie
+  .joins(:actors)
+  .where('LOWER(actors.name) LIKE ?', name_matcher)
+
 end
 
 def longest_career
